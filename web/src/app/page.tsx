@@ -36,7 +36,7 @@ function LandingContent() {
           </h1>
 
           <p className="text-lg text-zinc-500 max-w-lg mx-auto">
-            Every Claude session feeds a unique monster shaped by your project,
+            Every Claude session feeds a unique creature shaped by your project,
             language, and coding style. Install once, code as normal.
           </p>
 
@@ -57,7 +57,7 @@ function LandingContent() {
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-px bg-white/[0.06] rounded-xl overflow-hidden">
           <Feature
             title="Evolve"
-            description="Your coding style shapes procedural creatures. Each project gets a unique monster."
+            description="Your coding style shapes procedural creatures. Each project gets a unique creature."
           />
           <Feature
             title="Track"
@@ -75,16 +75,16 @@ function LandingContent() {
         <div className="max-w-lg mx-auto space-y-6 text-center">
           <h2 className="text-xl font-semibold text-zinc-200">Get started</h2>
           <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] p-5 font-mono text-sm text-left space-y-1.5">
-            <Line prompt>npm install -g aimonsters</Line>
-            <Line prompt>aimonsters init</Line>
-            <Line prompt comment="your monster feeds automatically">claude</Line>
+            <Line prompt>npm install -g tokenpets</Line>
+            <Line prompt>tokenpets init</Line>
+            <Line prompt comment="your creature feeds automatically">claude</Line>
           </div>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-white/[0.06] py-6 text-center text-xs text-zinc-600">
-        AI Monsters
+        TokenPets
       </footer>
     </div>
   );

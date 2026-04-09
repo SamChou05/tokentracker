@@ -14,7 +14,7 @@ export function syncInBackground(creature: CreatureState, session?: SessionData)
 
   // Fire and forget — don't await
   doSync(config.syncUrl, config.syncToken, creature).catch((err) => {
-    console.error(`[aimonsters] ⚠ Sync failed (non-blocking): ${err.message}`);
+    console.error(`[tokenpets] ⚠ Sync failed (non-blocking): ${err.message}`);
   });
 }
 
@@ -57,9 +57,9 @@ async function doSync(
   });
 
   if (resp.ok) {
-    console.error(`[aimonsters] ☁️  Synced to web`);
+    console.error(`[tokenpets] ☁️  Synced to web`);
   } else {
     const text = await resp.text().catch(() => '');
-    console.error(`[aimonsters] ⚠ Sync returned ${resp.status}: ${text}`);
+    console.error(`[tokenpets] ⚠ Sync returned ${resp.status}: ${text}`);
   }
 }

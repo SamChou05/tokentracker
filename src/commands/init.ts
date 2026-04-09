@@ -37,25 +37,25 @@ function commandExists(cmd: string): boolean {
   }
 }
 
-/** Check if aimonsters MCP is already registered */
+/** Check if tokenpets MCP is already registered */
 function isAlreadyRegistered(): boolean {
   try {
     const output = execSync('claude mcp list', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] });
-    return output.includes('aimonsters');
+    return output.includes('tokenpets');
   } catch {
     return false;
   }
 }
 
 export function runInit(): void {
-  console.log(`\n  ${BOLD}${CYAN}🐉 AI Monsters — Setup${RESET}\n`);
+  console.log(`\n  ${BOLD}${CYAN}🐉 TokenPets — Setup${RESET}\n`);
 
   // Step 1: Check Claude Code CLI
   console.log(`  ${DIM}Checking Claude Code CLI...${RESET}`);
   if (!commandExists('claude')) {
     console.log(`  ${RED}✗${RESET} Claude Code CLI not found.\n`);
     console.log(`  ${DIM}Install it from: ${CYAN}https://docs.anthropic.com/en/docs/claude-code${RESET}`);
-    console.log(`  ${DIM}Then run ${BOLD}aimonsters init${RESET}${DIM} again.${RESET}\n`);
+    console.log(`  ${DIM}Then run ${BOLD}tokenpets init${RESET}${DIM} again.${RESET}\n`);
     process.exit(1);
   }
   console.log(`  ${GREEN}✓${RESET} Claude Code CLI found`);
@@ -63,17 +63,17 @@ export function runInit(): void {
   // Step 2: Check if already registered
   console.log(`  ${DIM}Checking MCP registration...${RESET}`);
   if (isAlreadyRegistered()) {
-    console.log(`  ${GREEN}✓${RESET} AI Monsters MCP server already registered\n`);
-    console.log(`  ${DIM}You're all set! Start coding with Claude and your monster will grow.${RESET}`);
-    console.log(`  ${DIM}Run ${BOLD}aimonsters${RESET}${DIM} to see your creature.${RESET}\n`);
+    console.log(`  ${GREEN}✓${RESET} TokenPets MCP server already registered\n`);
+    console.log(`  ${DIM}You're all set! Start coding with Claude and your pet will grow.${RESET}`);
+    console.log(`  ${DIM}Run ${BOLD}tokenpets${RESET}${DIM} to see your creature.${RESET}\n`);
     return;
   }
 
   // Step 3: Create data directory
-  const dataDir = join(homedir(), '.aimonsters');
+  const dataDir = join(homedir(), '.tokenpets');
   if (!existsSync(dataDir)) {
     mkdirSync(dataDir, { recursive: true });
-    console.log(`  ${GREEN}✓${RESET} Created ${DIM}~/.aimonsters/${RESET}`);
+    console.log(`  ${GREEN}✓${RESET} Created ${DIM}~/.tokenpets/${RESET}`);
   } else {
     console.log(`  ${GREEN}✓${RESET} Data directory exists`);
   }
@@ -88,7 +88,7 @@ export function runInit(): void {
 
   console.log(`  ${DIM}Registering MCP server with Claude Code...${RESET}`);
   try {
-    execSync(`claude mcp add -s user aimonsters -- node ${mcpPath}`, {
+    execSync(`claude mcp add -s user tokenpets -- node ${mcpPath}`, {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
     console.log(`  ${GREEN}✓${RESET} MCP server registered (user scope)`);
@@ -99,7 +99,7 @@ export function runInit(): void {
     } else {
       console.log(`  ${RED}✗${RESET} Failed to register MCP server`);
       console.log(`  ${DIM}${stderr.trim()}${RESET}`);
-      console.log(`\n  ${DIM}Try manually: ${BOLD}claude mcp add -s user aimonsters -- node ${mcpPath}${RESET}\n`);
+      console.log(`\n  ${DIM}Try manually: ${BOLD}claude mcp add -s user tokenpets -- node ${mcpPath}${RESET}\n`);
       process.exit(1);
     }
   }
@@ -115,7 +115,7 @@ export function runInit(): void {
       mkdirSync(userHooksDir, { recursive: true });
 
       // Copy hook file
-      const destHook = join(userHooksDir, 'aimonsters-stop-feed.js');
+      const destHook = join(userHooksDir, 'tokenpets-stop-feed.js');
       copyFileSync(hookSource, destHook);
       chmodSync(destHook, 0o755);
 
@@ -132,7 +132,7 @@ export function runInit(): void {
 
       // Check if already installed
       const alreadyInstalled = settings.hooks.Stop.some((h: any) =>
-        JSON.stringify(h).includes('aimonsters')
+        JSON.stringify(h).includes('tokenpets')
       );
 
       if (!alreadyInstalled) {
@@ -159,7 +159,7 @@ export function runInit(): void {
   console.log(`  ${DIM}Verifying connection...${RESET}`);
   try {
     const listOutput = execSync('claude mcp list', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] });
-    if (listOutput.includes('aimonsters')) {
+    if (listOutput.includes('tokenpets')) {
       console.log(`  ${GREEN}✓${RESET} Connection verified`);
     }
   } catch {
@@ -172,11 +172,11 @@ export function runInit(): void {
 
   ${BOLD}What happens now:${RESET}
   ${DIM}1.${RESET} Open a new Claude Code session: ${BOLD}claude${RESET}
-  ${DIM}2.${RESET} Code as normal — your monster feeds automatically
-  ${DIM}3.${RESET} Check your creature: ${BOLD}aimonsters${RESET}
-  ${DIM}4.${RESET} See all creatures: ${BOLD}aimonsters show --all${RESET}
-  ${DIM}5.${RESET} View stats: ${BOLD}aimonsters stats${RESET}
+  ${DIM}2.${RESET} Code as normal — your pet feeds automatically
+  ${DIM}3.${RESET} Check your creature: ${BOLD}tokenpets${RESET}
+  ${DIM}4.${RESET} See all creatures: ${BOLD}tokenpets show --all${RESET}
+  ${DIM}5.${RESET} View stats: ${BOLD}tokenpets stats${RESET}
 
-  ${DIM}Your monster data lives at ~/.aimonsters/monsters.db${RESET}
+  ${DIM}Your pet data lives at ~/.tokenpets/monsters.db${RESET}
 `);
 }

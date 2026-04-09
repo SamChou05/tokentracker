@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * AI Monsters — Claude Code Stop Hook
+ * TokenPets — Claude Code Stop Hook
  *
  * Fires when Claude finishes a response. Reads precise token usage
  * from Claude's conversation JSONL logs and feeds the creature.
@@ -17,11 +17,11 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const AIMONSTERS_DIR = path.join(os.homedir(), '.aimonsters');
-const SESSION_FILE_DIR = path.join(AIMONSTERS_DIR, 'sessions');
+const TOKENPETS_DIR = path.join(os.homedir(), '.tokenpets');
+const SESSION_FILE_DIR = path.join(TOKENPETS_DIR, 'sessions');
 const CLAUDE_DIR = path.join(os.homedir(), '.claude');
 
-// Find the aimonsters dist directory — try global install first, then local
+// Find the tokenpets dist directory — try global install first, then local
 function findDistDir() {
   const relDist = path.join(__dirname, '..', 'dist');
   if (fs.existsSync(path.join(relDist, 'store.js'))) return relDist;
@@ -29,12 +29,12 @@ function findDistDir() {
   try {
     const globalRoot = require('child_process')
       .execSync('npm root -g', { encoding: 'utf-8' }).trim();
-    const globalDist = path.join(globalRoot, 'aimonsters', 'dist');
+    const globalDist = path.join(globalRoot, 'tokenpets', 'dist');
     if (fs.existsSync(path.join(globalDist, 'store.js'))) return globalDist;
   } catch {}
 
   try {
-    const resolved = require.resolve('aimonsters/dist/store.js');
+    const resolved = require.resolve('tokenpets/dist/store.js');
     return path.dirname(resolved);
   } catch {}
 
@@ -46,7 +46,7 @@ const DIST_DIR = findDistDir();
 /**
  * Derive the Claude project slug from a working directory path.
  * Claude uses the pattern: path separators become dashes, e.g.
- * /Users/samchou/aimonsters -> -Users-samchou-aimonsters
+ * /Users/samchou/tokenpets -> -Users-samchou-tokenpets
  */
 function getProjectSlug(cwd) {
   return cwd.replace(/\//g, '-');
@@ -78,14 +78,19 @@ function findConversationLog(sessionId, cwd) {
 
 /**
  * Parse the JSONL log and sum up precise token usage from all assistant messages.
- * Returns { tokens_in, tokens_out, total_messages }
+ * Splits into: uncached input, cache write, cache read, and output.
+ *
+ * For XP/leveling: all tokens count (you used the AI).
+ * For cost: each category has a different rate.
  */
 function parseTokenUsage(jsonlPath) {
   const content = fs.readFileSync(jsonlPath, 'utf-8');
   const lines = content.trim().split('\n');
 
-  let tokens_in = 0;
-  let tokens_out = 0;
+  let input_uncached = 0;
+  let input_cache_write = 0;
+  let input_cache_read = 0;
+  let output = 0;
   let totalMessages = 0;
 
   for (const line of lines) {
@@ -94,19 +99,51 @@ function parseTokenUsage(jsonlPath) {
       const usage = entry?.message?.usage;
       if (!usage) continue;
 
-      // input_tokens = direct input (non-cached)
-      // cache_creation_input_tokens = tokens written to cache
-      // cache_read_input_tokens = tokens read from cache
-      // All represent actual input token processing
-      tokens_in += (usage.input_tokens || 0)
-                 + (usage.cache_creation_input_tokens || 0)
-                 + (usage.cache_read_input_tokens || 0);
-      tokens_out += (usage.output_tokens || 0);
+      input_uncached += (usage.input_tokens || 0);
+      input_cache_write += (usage.cache_creation_input_tokens || 0);
+      input_cache_read += (usage.cache_read_input_tokens || 0);
+      output += (usage.output_tokens || 0);
       totalMessages++;
     } catch {}
   }
 
-  return { tokens_in, tokens_out, totalMessages };
+  // tokens_in = fresh input only (uncached + cache write), excludes cache reads
+  // This drives XP/leveling — represents actual new AI usage, not replayed context
+  const tokens_in = input_uncached + input_cache_write;
+  const tokens_out = output;
+  const total_all = input_uncached + input_cache_write + input_cache_read + output;
+
+  return {
+    tokens_in,
+    tokens_out,
+    total_all,
+    input_uncached,
+    input_cache_write,
+    input_cache_read,
+    output,
+    totalMessages,
+  };
+}
+
+/**
+ * Calculate estimated API cost based on token breakdown and model.
+ * Rates per million tokens (as of 2025):
+ *   Opus:   input $15, cache_write $18.75, cache_read $1.50, output $75
+ *   Sonnet: input $3,  cache_write $3.75,  cache_read $0.30, output $15
+ */
+function calculateCost(usage, model) {
+  const isOpus = model?.toLowerCase().includes('opus');
+
+  const rates = isOpus
+    ? { input: 15, cache_write: 18.75, cache_read: 1.50, output: 75 }
+    : { input: 3, cache_write: 3.75, cache_read: 0.30, output: 15 };
+
+  return (
+    (usage.input_uncached / 1_000_000) * rates.input +
+    (usage.input_cache_write / 1_000_000) * rates.cache_write +
+    (usage.input_cache_read / 1_000_000) * rates.cache_read +
+    (usage.output / 1_000_000) * rates.output
+  );
 }
 
 // Read JSON from stdin
@@ -182,15 +219,30 @@ function feedCreature(session, cwd) {
   }
 
   // Calculate delta since last feed (only send new tokens)
+  // Use total_all for XP (includes cache reads — you still used the AI)
   const deltaIn = usage.tokens_in - (session.lastFedTokensIn || 0);
   const deltaOut = usage.tokens_out - (session.lastFedTokensOut || 0);
+  const deltaTotalAll = usage.total_all - (session.lastFedTotalAll || 0);
 
   // Nothing new to feed
-  if (deltaIn <= 0 && deltaOut <= 0) return;
+  if (deltaTotalAll <= 0) return;
+
+  // Calculate cost for just the delta
+  const deltaUsage = {
+    input_uncached: usage.input_uncached - (session.lastFedUncached || 0),
+    input_cache_write: usage.input_cache_write - (session.lastFedCacheWrite || 0),
+    input_cache_read: usage.input_cache_read - (session.lastFedCacheRead || 0),
+    output: usage.output - (session.lastFedOutput || 0),
+  };
 
   // Update session with what we've fed so far
   session.lastFedTokensIn = usage.tokens_in;
   session.lastFedTokensOut = usage.tokens_out;
+  session.lastFedTotalAll = usage.total_all;
+  session.lastFedUncached = usage.input_uncached;
+  session.lastFedCacheWrite = usage.input_cache_write;
+  session.lastFedCacheRead = usage.input_cache_read;
+  session.lastFedOutput = usage.output;
   const sessionFile = path.join(SESSION_FILE_DIR, `${session.sessionId}.json`);
   fs.writeFileSync(sessionFile, JSON.stringify(session, null, 2));
 
@@ -202,11 +254,7 @@ function feedCreature(session, cwd) {
     const project = getProjectIdentity(cwd);
     upsertProject(project);
 
-    // Estimate cost based on model pricing
-    const isOpus = session.model?.toLowerCase().includes('opus');
-    const inputRate = isOpus ? 0.000015 : 0.000003;
-    const outputRate = isOpus ? 0.000075 : 0.000015;
-    const costEstimate = (deltaIn * inputRate) + (deltaOut * outputRate);
+    const costEstimate = calculateCost(deltaUsage, session.model);
 
     const { creature } = recordSession(project.id, {
       tokens_in: deltaIn,

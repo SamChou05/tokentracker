@@ -1,22 +1,29 @@
 import Database from 'better-sqlite3';
-import { mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, renameSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 
-const AIMONSTERS_DIR = join(homedir(), '.aimonsters');
-const DB_PATH = join(AIMONSTERS_DIR, 'monsters.db');
+const TOKENPETS_DIR = join(homedir(), '.tokenpets');
+const LEGACY_DIR = join(homedir(), '.aimonsters');
+const DB_PATH = join(TOKENPETS_DIR, 'monsters.db');
 
 let db: Database.Database | null = null;
 
 /**
  * Get or create the singleton database connection.
- * Auto-creates ~/.aimonsters/ and runs migrations.
+ * Auto-creates ~/.tokenpets/ and runs migrations.
+ * Migrates from ~/.aimonsters/ if it exists.
  */
 export function getDb(dbPath?: string): Database.Database {
   if (db) return db;
 
   const path = dbPath ?? DB_PATH;
   const dir = join(path, '..');
+
+  // Migrate from legacy ~/.aimonsters/ directory if needed
+  if (path === DB_PATH && !existsSync(TOKENPETS_DIR) && existsSync(LEGACY_DIR)) {
+    renameSync(LEGACY_DIR, TOKENPETS_DIR);
+  }
 
   // Ensure directory exists
   mkdirSync(dir, { recursive: true });
@@ -125,4 +132,4 @@ function runMigrations(db: Database.Database): void {
   }
 }
 
-export { DB_PATH, AIMONSTERS_DIR };
+export { DB_PATH, TOKENPETS_DIR };

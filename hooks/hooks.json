@@ -1,5 +1,5 @@
 {
-  "description": "AI Monsters — auto-track coding sessions to feed your creature",
+  "description": "TokenPets — auto-track coding sessions to feed your creature",
   "hooks": {
     "Stop": [
       {

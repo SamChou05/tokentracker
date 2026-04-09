@@ -1,12 +1,12 @@
 {
-  "name": "aimonsters",
+  "name": "tokenpets",
   "version": "0.1.0",
   "description": "AI coding companion — your Claude sessions evolve digital creatures",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "aimonsters": "dist/cli.js",
-    "aimonsters-mcp": "dist/index.js"
+    "tokenpets": "dist/cli.js",
+    "tokenpets-mcp": "dist/index.js"
   },
   "files": [
     "dist",
@@ -25,13 +25,13 @@
     "ai",
     "coding",
     "gamification",
-    "monsters",
+    "tokenpets",
     "creatures",
     "developer-tools"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/samchou/aimonsters"
+    "url": "https://github.com/SamChou05/tokentracker"
   },
   "author": "samchou",
   "license": "MIT",

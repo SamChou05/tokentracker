@@ -6,7 +6,7 @@ import { registerFeedTool, registerStatusTool } from './tools/session.js';
 import { getProjectIdentity } from './project.js';
 
 const server = new McpServer({
-  name: 'aimonsters',
+  name: 'tokenpets',
   version: '0.1.0',
 });
 
@@ -17,15 +17,15 @@ registerStatusTool(server);
 // Start server
 async function main() {
   const project = getProjectIdentity();
-  console.error(`[aimonsters] 🐉 MCP server starting for project: ${project.name} (${project.id})`);
+  console.error(`[tokenpets] 🐉 MCP server starting for project: ${project.name} (${project.id})`);
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  console.error('[aimonsters] ✅ MCP server connected via stdio');
+  console.error('[tokenpets] ✅ MCP server connected via stdio');
 }
 
 main().catch((error) => {
-  console.error('[aimonsters] Fatal error:', error);
+  console.error('[tokenpets] Fatal error:', error);
   process.exit(1);
 });

@@ -16,7 +16,7 @@ const STYLE_LABELS: Record<string, string> = {
 export function registerFeedTool(server: McpServer): void {
   server.tool(
     'feed_session',
-    'Record a coding session to feed your AI Monster. Call this after completing work to log token usage and outcomes.',
+    'Record a coding session to feed your TokenPet. Call this after completing work to log token usage and outcomes.',
     {
       tokens_in: z.number().describe('Input tokens consumed in the session'),
       tokens_out: z.number().describe('Output tokens generated in the session'),
@@ -45,7 +45,7 @@ export function registerFeedTool(server: McpServer): void {
       });
 
       const fedTokens = params.tokens_in + params.tokens_out;
-      console.error(`[aimonsters] 🍖 Fed ${fedTokens} tokens to ${project.name} (Level ${creature.level}, ${creature.total_sessions} sessions)`);
+      console.error(`[tokenpets] 🍖 Fed ${fedTokens} tokens to ${project.name} (Level ${creature.level}, ${creature.total_sessions} sessions)`);
 
       // Analyze project DNA on first feed or every 10 sessions
       if (!creature.trait_dna || creature.total_sessions % 10 === 1) {
@@ -53,20 +53,20 @@ export function registerFeedTool(server: McpServer): void {
           const dna = analyzeProject(project.directory);
           saveTraitDNA(project.id, dna);
           creature.trait_dna = dna;
-          console.error(`[aimonsters] 🧬 DNA analyzed: ${dna.element}/${dna.archetype} (${dna.dnaHash})`);
+          console.error(`[tokenpets] 🧬 DNA analyzed: ${dna.element}/${dna.archetype} (${dna.dnaHash})`);
         } catch (err: any) {
-          console.error(`[aimonsters] ⚠ DNA analysis failed: ${err.message}`);
+          console.error(`[tokenpets] ⚠ DNA analysis failed: ${err.message}`);
         }
       }
 
       // Auto-sync to web (fire-and-forget)
       syncInBackground(creature);
 
-      let text = `🍖 Fed ${fedTokens.toLocaleString()} tokens to your ${project.name} monster!\n`;
+      let text = `🍖 Fed ${fedTokens.toLocaleString()} tokens to your ${project.name} pet!\n`;
 
       if (leveledUp) {
         text += `\n🎉 LEVEL UP! ${previousLevel} → ${creature.level}!\n`;
-        text += `Your monster evolves...\n`;
+        text += `Your pet evolves...\n`;
       }
 
       // XP progress bar
@@ -93,21 +93,21 @@ export function registerFeedTool(server: McpServer): void {
 
 export function registerStatusTool(server: McpServer): void {
   server.tool(
-    'monster_status',
-    'Check the status of your AI Monster for the current project.',
+    'pet_status',
+    'Check the status of your TokenPet for the current project.',
     {},
     async () => {
       const project = getProjectIdentity();
       upsertProject(project);
 
       const creature = getCreature(project.id);
-      console.error(`[aimonsters] 📊 Status check for ${project.name}`);
+      console.error(`[tokenpets] 📊 Status check for ${project.name}`);
 
       if (!creature) {
         return {
           content: [{
             type: 'text' as const,
-            text: `🥚 Your ${project.name} monster hasn't hatched yet!\n` +
+            text: `🥚 Your ${project.name} pet hasn't hatched yet!\n` +
               `Feed it by calling feed_session after doing some work.\n` +
               `Hatch threshold: 10,000 tokens\n` +
               `Project: ${project.id}`,
@@ -119,7 +119,7 @@ export function registerStatusTool(server: McpServer): void {
       const nextThreshold = getLevelThreshold(nextLevel);
       const progressPct = Math.round(creature.xp_progress * 100);
 
-      let text = `🐉 ${project.name} Monster — Level ${creature.level}\n`;
+      let text = `🐉 ${project.name} Pet — Level ${creature.level}\n`;
       if (creature.level < getMaxLevel()) {
         text += `Progress: ${progressPct}% → Lv.${nextLevel} (need ${nextThreshold.toLocaleString()} tokens)\n`;
       } else {

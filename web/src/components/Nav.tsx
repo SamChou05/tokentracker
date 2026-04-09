@@ -10,7 +10,7 @@ export function Nav() {
   return (
     <nav className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
       <Link href="/" className="text-sm font-semibold tracking-tight hover:text-zinc-300 transition-colors">
-        AI Monsters
+        TokenPets
       </Link>
       <div className="flex items-center gap-4">
         <Authenticated>

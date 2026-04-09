@@ -8,4 +8,4 @@ Include:
 - `summary`: Brief one-line summary of what was accomplished
 - `tool_calls`: Approximate number of tool calls made in the session
 
-Also call `monster_status` if the user asks about their creature or says "aimonsters" or "monster".
+Also call `pet_status` if the user asks about their creature or says "tokenpets" or "pet".

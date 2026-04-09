@@ -12,9 +12,9 @@ const GREEN = '\x1b[32m';
 const RED = '\x1b[31m';
 const CYAN = '\x1b[36m';
 
-const AIMONSTERS_DIR = join(homedir(), '.aimonsters');
-const TOKEN_PATH = join(AIMONSTERS_DIR, 'sync-token');
-const CONFIG_PATH = join(AIMONSTERS_DIR, 'config.json');
+const TOKENPETS_DIR = join(homedir(), '.tokenpets');
+const TOKEN_PATH = join(TOKENPETS_DIR, 'sync-token');
+const CONFIG_PATH = join(TOKENPETS_DIR, 'config.json');
 
 // Default to the Convex site URL — can be overridden in config
 const DEFAULT_SYNC_URL = 'https://festive-corgi-668.convex.site';
@@ -45,13 +45,13 @@ export function getSyncConfig(): SyncConfig | null {
 
 /** Save sync token to disk */
 function saveSyncToken(token: string): void {
-  mkdirSync(AIMONSTERS_DIR, { recursive: true });
+  mkdirSync(TOKENPETS_DIR, { recursive: true });
   writeFileSync(TOKEN_PATH, token, { mode: 0o600 }); // Owner-only read/write
 }
 
 /** Save config to disk */
 function saveConfig(config: Record<string, string>): void {
-  mkdirSync(AIMONSTERS_DIR, { recursive: true });
+  mkdirSync(TOKENPETS_DIR, { recursive: true });
 
   let existing: Record<string, string> = {};
   if (existsSync(CONFIG_PATH)) {
@@ -64,7 +64,7 @@ function saveConfig(config: Record<string, string>): void {
 }
 
 export async function runLogin(): Promise<void> {
-  console.log(`\n  ${BOLD}${CYAN}🐉 AI Monsters — Login${RESET}\n`);
+  console.log(`\n  ${BOLD}${CYAN}🐉 TokenPets — Login${RESET}\n`);
 
   // Check existing token
   const existing = getSyncConfig();
@@ -80,7 +80,7 @@ export async function runLogin(): Promise<void> {
 
   // Open browser to token page
   const tokenUrl = `${DEFAULT_SYNC_URL.replace('.convex.site', '')}`; // This won't work cleanly
-  const webUrl = 'http://localhost:3000/cli-token'; // Dev URL — will be aimonsters.dev in prod
+  const webUrl = 'http://localhost:3000/cli-token'; // Dev URL — will be tokenpets.dev in prod
 
   console.log(`  ${DIM}Step 1:${RESET} Sign in on the web and get your sync token.\n`);
   console.log(`  Opening: ${CYAN}${webUrl}${RESET}\n`);

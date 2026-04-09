@@ -1,31 +1,31 @@
-# 🐉 AI Monsters
+# 🐉 TokenPets
 
-Your coding sessions with Claude evolve unique digital creatures. Every token spent shapes a monster only you can create.
+Your coding sessions with Claude evolve unique digital creatures. Every token spent shapes a creature only you can create.
 
 ## Install
 
 ```bash
-npm install -g aimonsters
-aimonsters init
+npm install -g tokenpets
+tokenpets init
 ```
 
-That's it. Two commands. Every Claude Code session from now on feeds your monster.
+That's it. Two commands. Every Claude Code session from now on feeds your creature.
 
 ## How it works
 
-1. **Install** — `aimonsters init` registers an MCP server with Claude Code
-2. **Code** — use Claude as normal, your monster feeds automatically
+1. **Install** — `tokenpets init` registers an MCP server with Claude Code
+2. **Code** — use Claude as normal, your creature feeds automatically
 3. **Evolve** — your coding style (refactoring, features, debugging) shapes creature traits
 4. **Collect** — each project gets its own unique creature
 
 ## Commands
 
 ```bash
-aimonsters              # Show your creature
-aimonsters show --all   # Show all your creatures
-aimonsters stats        # Detailed session history
-aimonsters login        # Link to your web profile
-aimonsters help         # All commands
+tokenpets              # Show your creature
+tokenpets show --all   # Show all your creatures
+tokenpets stats        # Detailed session history
+tokenpets login        # Link to your web profile
+tokenpets help         # All commands
 ```
 
 ## Creature DNA

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Monsters",
+  title: "TokenPets",
   description: "Your AI coding companions — creatures that evolve as you code",
 };
 

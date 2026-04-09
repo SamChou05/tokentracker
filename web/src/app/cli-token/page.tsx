@@ -61,7 +61,7 @@ function TokenGenerator() {
     <div className="max-w-lg w-full text-center space-y-6">
       <h1 className="text-2xl font-bold">CLI Sync Token</h1>
       <p className="text-gray-400">
-        Use this token to link your local AI Monsters CLI to your web profile.
+        Use this token to link your local TokenPets CLI to your web profile.
       </p>
 
       {displayToken ? (
@@ -86,7 +86,7 @@ function TokenGenerator() {
           <div className="text-sm text-gray-500 space-y-2 text-left bg-gray-900 rounded-lg p-4">
             <p className="font-medium text-gray-300">In your terminal, run:</p>
             <code className="block text-emerald-400">
-              aimonsters login
+              tokenpets login
             </code>
             <p>Then paste this token when prompted.</p>
           </div>

@@ -61,7 +61,7 @@ export default function PublicProfilePage() {
 
       {/* Stats bar */}
       <section className="grid grid-cols-4 gap-4 py-6 border-b border-gray-800">
-        <StatCard label="Monsters" value={stats.creatureCount.toString()} />
+        <StatCard label="Pets" value={stats.creatureCount.toString()} />
         <StatCard label="Highest Level" value={stats.highestLevel.toString()} />
         <StatCard label="Total Tokens" value={formatNumber(stats.totalTokens)} />
         <StatCard label="Sessions" value={stats.totalSessions.toString()} />
@@ -91,7 +91,7 @@ export default function PublicProfilePage() {
           href="/"
           className="text-sm text-gray-500 hover:text-gray-300 transition-colors"
         >
-          🐉 AI Monsters — evolve your coding companion
+          🐉 TokenPets — evolve your coding companion
         </Link>
       </footer>
     </main>
@@ -153,13 +153,13 @@ function NotFound({ username }: { username: string }) {
         <div className="text-6xl">👻</div>
         <h1 className="text-2xl font-bold">User not found</h1>
         <p className="text-gray-400">
-          No monster trainer named <span className="font-mono text-gray-300">@{username}</span> exists yet.
+          No pet trainer named <span className="font-mono text-gray-300">@{username}</span> exists yet.
         </p>
         <Link
           href="/"
           className="inline-block mt-4 px-6 py-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-sm transition-colors"
         >
-          Go to AI Monsters
+          Go to TokenPets
         </Link>
       </div>
     </main>

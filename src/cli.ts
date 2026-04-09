@@ -45,7 +45,7 @@ function showCreature(projectId?: string): void {
     getDb();
   } catch (err: any) {
     console.error(`\n  ${RED}Error:${RESET} Could not open database: ${err.message}`);
-    console.error(`  ${DIM}Run ${BOLD}aimonsters init${RESET}${DIM} to set up.${RESET}\n`);
+    console.error(`  ${DIM}Run ${BOLD}tokenpets init${RESET}${DIM} to set up.${RESET}\n`);
     process.exit(1);
   }
 
@@ -64,8 +64,8 @@ function showCreature(projectId?: string): void {
   if (!creature) {
     const traits = eggTraits(projectName);
     console.log(renderCreature(traits));
-    console.log(`  ${DIM}Feed your monster by coding with Claude!${RESET}`);
-    console.log(`  ${DIM}Run ${BOLD}aimonsters init${RESET}${DIM} if you haven't set up yet.${RESET}\n`);
+    console.log(`  ${DIM}Feed your pet by coding with Claude!${RESET}`);
+    console.log(`  ${DIM}Run ${BOLD}tokenpets init${RESET}${DIM} if you haven't set up yet.${RESET}\n`);
     return;
   }
 
@@ -128,11 +128,11 @@ function showAll(): void {
   const creatures = getAllCreatures();
 
   if (creatures.length === 0) {
-    console.log(`\n  ${DIM}No monsters yet. Start coding with Claude to hatch your first!${RESET}\n`);
+    console.log(`\n  ${DIM}No pets yet. Start coding with Claude to hatch your first!${RESET}\n`);
     return;
   }
 
-  console.log(`\n  ${BOLD}${CYAN}🐉 Your Monsters${RESET}\n`);
+  console.log(`\n  ${BOLD}${CYAN}🐉 Your Pets${RESET}\n`);
 
   for (const creature of creatures) {
     const traits = deriveTraits(creature);
@@ -184,25 +184,25 @@ function showStats(): void {
 
 function showHelp(): void {
   console.log(`
-  ${BOLD}${CYAN}🐉 aimonsters${RESET} — Your AI coding companion
+  ${BOLD}${CYAN}🐉 tokenpets${RESET} — Your AI coding companion
 
   ${BOLD}Usage:${RESET}
-    aimonsters init         Set up AI Monsters + register MCP server
-    aimonsters login        Link your CLI to your web profile
-    aimonsters              Show your monster for the current project
-    aimonsters show         Same as above
-    aimonsters show --all   Show all your monsters
-    aimonsters stats        Show session history and detailed stats
-    aimonsters version      Show version
-    aimonsters help         Show this help message
+    tokenpets init         Set up TokenPets + register MCP server
+    tokenpets login        Link your CLI to your web profile
+    tokenpets              Show your pet for the current project
+    tokenpets show         Same as above
+    tokenpets show --all   Show all your pets
+    tokenpets stats        Show session history and detailed stats
+    tokenpets version      Show version
+    tokenpets help         Show this help message
 
   ${BOLD}How it works:${RESET}
     1. Code with Claude as normal
     2. Your sessions are tracked via the MCP server
-    3. Your monster evolves based on your coding activity
+    3. Your pet evolves based on your coding activity
     4. Each project gets its own unique creature
 
-  ${DIM}Data stored at ~/.aimonsters/monsters.db${RESET}
+  ${DIM}Data stored at ~/.tokenpets/monsters.db${RESET}
 `);
 }
 
@@ -234,7 +234,7 @@ switch (command) {
   case 'version':
   case '--version':
   case '-v':
-    console.log('aimonsters v0.1.0');
+    console.log('tokenpets v0.1.0');
     break;
   case 'help':
   case '--help':

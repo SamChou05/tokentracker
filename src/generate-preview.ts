@@ -122,7 +122,7 @@ const cards = creatures.map(({ name, dna, level }) => {
 const html = `<!DOCTYPE html>
 <html>
 <head>
-  <title>AI Monsters — Creature Preview</title>
+  <title>TokenPets — Creature Preview</title>
   <style>
     body { background: #0a0a0a; color: #eee; font-family: system-ui; padding: 40px; }
     h1 { text-align: center; color: #4fd1c5; }
@@ -130,7 +130,7 @@ const html = `<!DOCTYPE html>
   </style>
 </head>
 <body>
-  <h1>🐉 AI Monsters — Procedural Creature Gallery</h1>
+  <h1>🐉 TokenPets — Procedural Creature Gallery</h1>
   <div class="grid">
     ${cards}
   </div>

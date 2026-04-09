@@ -50,7 +50,7 @@ function DashboardContent() {
           />
         )}
         <div>
-          <h1 className="text-xl font-semibold text-zinc-100">{user?.name || "Monster Trainer"}</h1>
+          <h1 className="text-xl font-semibold text-zinc-100">{user?.name || "TokenPets Trainer"}</h1>
           <p className="text-sm text-zinc-500">
             {(user as any)?.username ? `@${(user as any).username}` : user?.email}
           </p>
@@ -59,7 +59,7 @@ function DashboardContent() {
 
       {/* Creature Collection */}
       <section className="py-8">
-        <h2 className="text-lg font-semibold text-zinc-200 mb-6">Your Monsters</h2>
+        <h2 className="text-lg font-semibold text-zinc-200 mb-6">Your Pets</h2>
 
         {creatures === undefined ? (
           <div className="text-gray-500">Loading creatures...</div>
@@ -81,14 +81,14 @@ function EmptyState() {
   return (
     <div className="text-center py-16 px-4 border border-dashed border-white/[0.08] rounded-xl">
       <div className="text-4xl mb-4">🥚</div>
-      <h3 className="text-base font-medium text-zinc-200 mb-2">No monsters yet</h3>
+      <h3 className="text-base font-medium text-zinc-200 mb-2">No pets yet</h3>
       <p className="text-sm text-zinc-500 max-w-md mx-auto mb-6">
         Install the CLI and start coding with Claude to hatch your first creature.
       </p>
       <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] p-4 inline-block text-left font-mono text-sm">
-        <div className="text-zinc-400">$ <span className="text-zinc-300">npm install -g aimonsters</span></div>
-        <div className="text-zinc-400">$ <span className="text-zinc-300">aimonsters init</span></div>
-        <div className="text-zinc-400">$ <span className="text-zinc-300">aimonsters login</span></div>
+        <div className="text-zinc-400">$ <span className="text-zinc-300">npm install -g tokenpets</span></div>
+        <div className="text-zinc-400">$ <span className="text-zinc-300">tokenpets init</span></div>
+        <div className="text-zinc-400">$ <span className="text-zinc-300">tokenpets login</span></div>
       </div>
     </div>
   );
