@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Local data
+*.db
+*.db-shm
+*.db-wal
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# GSD working files
+.gsd/
+.bg-shell/
+
+# Generated previews
+creature-preview.html
+level-comparison.html
+
+# Vercel
+.vercel/
+
+# Next.js (web/)
+web/.next/
+web/out/
+web/node_modules/
+
+# Convex generated
+web/convex/_generated/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
