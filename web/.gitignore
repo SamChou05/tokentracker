@@ -47,5 +47,3 @@ next-env.d.ts
 # Vercel
 .vercel/
 
-# Convex generated
-convex/_generated/

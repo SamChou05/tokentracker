@@ -34,8 +34,6 @@ web/.next/
 web/out/
 web/node_modules/
 
-# Convex generated
-web/convex/_generated/
 
 # IDE
 .idea/
