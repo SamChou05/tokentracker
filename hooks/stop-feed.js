@@ -195,56 +195,41 @@ function feedCreature(session, cwd) {
   fs.writeFileSync(sessionFile, JSON.stringify(session, null, 2));
 
   try {
-    const storePath = DIST_DIR + '/store.js';
-    const projectPath = DIST_DIR + '/project.js';
-    const analyzerPath = DIST_DIR + '/analyzer/index.js';
-    const syncPath = DIST_DIR + '/sync.js';
+    const { getProjectIdentity } = require(DIST_DIR + '/project.js');
+    const { upsertProject, recordSession, saveTraitDNA } = require(DIST_DIR + '/store.js');
+    const { analyzeProject } = require(DIST_DIR + '/analyzer/index.js');
 
-    if (!fs.existsSync(storePath)) return;
+    const project = getProjectIdentity(cwd);
+    upsertProject(project);
 
-    // Estimate cost based on model pricing (rough averages)
-    // Opus: ~$15/M input, ~$75/M output; Sonnet: ~$3/M input, ~$15/M output
+    // Estimate cost based on model pricing
     const isOpus = session.model?.toLowerCase().includes('opus');
     const inputRate = isOpus ? 0.000015 : 0.000003;
     const outputRate = isOpus ? 0.000075 : 0.000015;
     const costEstimate = (deltaIn * inputRate) + (deltaOut * outputRate);
 
-    const script = `
-      const { getProjectIdentity } = require('${projectPath}');
-      const { upsertProject, recordSession, getCreature, saveTraitDNA } = require('${storePath}');
-      const { analyzeProject } = require('${analyzerPath}');
+    const { creature } = recordSession(project.id, {
+      tokens_in: deltaIn,
+      tokens_out: deltaOut,
+      cost_usd: costEstimate,
+      tool_calls: session.responseCount,
+      outcome: 'success',
+      summary: 'Auto-tracked via Claude Code hook (precise)',
+    });
 
+    // Analyze DNA on first feed
+    if (!creature.trait_dna) {
       try {
-        const project = getProjectIdentity('${session.cwd.replace(/'/g, "\\'")}');
-        upsertProject(project);
-
-        const { creature } = recordSession(project.id, {
-          tokens_in: ${deltaIn},
-          tokens_out: ${deltaOut},
-          cost_usd: ${costEstimate},
-          tool_calls: ${session.responseCount},
-          outcome: 'success',
-          summary: 'Auto-tracked via Claude Code hook (precise)',
-        });
-
-        if (!creature.trait_dna) {
-          try {
-            const dna = analyzeProject('${session.cwd.replace(/'/g, "\\'")}');
-            saveTraitDNA(project.id, dna);
-            creature.trait_dna = dna;
-          } catch(e) {}
-        }
-
-        try {
-          const { syncInBackground } = require('${syncPath}');
-          syncInBackground(creature);
-        } catch(e) {}
+        const dna = analyzeProject(cwd);
+        saveTraitDNA(project.id, dna);
+        creature.trait_dna = dna;
       } catch(e) {}
-    `;
+    }
 
-    require('child_process').exec(
-      `node -e ${JSON.stringify(script)}`,
-      { timeout: 5000, env: { ...process.env, HOME: os.homedir() } }
-    );
+    // Sync to web (fire-and-forget, non-blocking)
+    try {
+      const { syncInBackground } = require(DIST_DIR + '/sync.js');
+      syncInBackground(creature);
+    } catch(e) {}
   } catch {}
 }
